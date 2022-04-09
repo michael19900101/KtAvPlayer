@@ -1,10 +1,11 @@
 package com.example.ktavplayer;
 
-import android.app.Activity;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.view.SurfaceView;
+import android.view.View;
 import android.view.WindowManager;
+import android.widget.SeekBar;
 
 import androidx.activity.ComponentActivity;
 import androidx.annotation.Nullable;
@@ -15,9 +16,14 @@ import com.example.ktavplayer.player.DNPlayer;
  * @author Lance
  * @date 2018/9/7
  */
-public class PlayActivity extends ComponentActivity {
+public class PlayActivity extends ComponentActivity implements SeekBar.OnSeekBarChangeListener{
     private DNPlayer dnPlayer;
     public String url;
+    private SeekBar seekBar;
+
+    private int progress;
+    private boolean isTouch;
+    private boolean isSeek;
 
 
     @Override
@@ -31,14 +37,59 @@ public class PlayActivity extends ComponentActivity {
         dnPlayer = new DNPlayer();
         dnPlayer.setSurfaceView(surfaceView);
         dnPlayer.setOnPrepareListener(new DNPlayer.OnPrepareListener() {
+            /**
+             * 视频信息获取完成 随时可以播放的时候回调
+             */
             @Override
             public void onPrepared() {
+                //获得时间
+                int duration = dnPlayer.getDuration();
+                //直播： 时间就是0
+                if (duration != 0){
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            //显示进度条
+                            seekBar.setVisibility(View.VISIBLE);
+                        }
+                    });
+                }
                 dnPlayer.start();
             }
         });
+        dnPlayer.setOnErrorListener(new DNPlayer.OnErrorListener() {
+            @Override
+            public void onError(int error) {
 
-        url = "https://media.w3.org/2010/05/sintel/trailer.mp4";
-        dnPlayer.setDataSource(url);
+            }
+        });
+        dnPlayer.setOnProgressListener(new DNPlayer.OnProgressListener() {
+
+            @Override
+            public void onProgress(final int progress2) {
+                if (!isTouch) {
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            int duration = dnPlayer.getDuration();
+                            //如果是直播
+                            if (duration != 0) {
+                                if (isSeek){
+                                    isSeek = false;
+                                    return;
+                                }
+                                //更新进度 计算比例
+                                seekBar.setProgress(progress2 * 100 / duration);
+                            }
+                        }
+                    });
+                }
+            }
+        });
+        seekBar = findViewById(R.id.seekBar);
+        seekBar.setOnSeekBarChangeListener(this);
+        url = getIntent().getStringExtra("url");
+        dnPlayer.setDataSource("/sdcard/b.mp4");
     }
 
     @Override
@@ -54,6 +105,10 @@ public class PlayActivity extends ComponentActivity {
         SurfaceView surfaceView = findViewById(R.id.surfaceView);
         dnPlayer.setSurfaceView(surfaceView);
         dnPlayer.setDataSource(url);
+        seekBar = findViewById(R.id.seekBar);
+        seekBar.setOnSeekBarChangeListener(this);
+        seekBar.setProgress(progress);
+
     }
 
     @Override
@@ -72,5 +127,28 @@ public class PlayActivity extends ComponentActivity {
     protected void onDestroy() {
         super.onDestroy();
         dnPlayer.release();
+    }
+
+    @Override
+    public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+
+    }
+
+    @Override
+    public void onStartTrackingTouch(SeekBar seekBar) {
+        isTouch = true;
+    }
+
+    /**
+     * 停止拖动的时候回调
+     * @param seekBar
+     */
+    @Override
+    public void onStopTrackingTouch(SeekBar seekBar) {
+        isSeek = true;
+        isTouch = false;
+        progress = dnPlayer.getDuration() * seekBar.getProgress() / 100;
+        //进度调整
+        dnPlayer.seek(progress);
     }
 }

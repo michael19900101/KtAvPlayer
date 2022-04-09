@@ -6,6 +6,7 @@
 
 JavaVM *javaVM = NULL;
 DNFFmpeg *ffmpeg = 0;
+JavaCallHelper *javaCallHelper = 0;
 ANativeWindow *window = 0;
 pthread_mutex_t mutex = PTHREAD_MUTEX_INITIALIZER;
 
@@ -59,8 +60,7 @@ JNIEXPORT void JNICALL
 Java_com_example_ktavplayer_player_DNPlayer_native_1prepare(JNIEnv *env, jobject instance,
                                                           jstring dataSource_) {
     const char *dataSource = env->GetStringUTFChars(dataSource_, 0);
-
-    JavaCallHelper *javaCallHelper = new JavaCallHelper(javaVM, env, instance);
+    javaCallHelper = new JavaCallHelper(javaVM, env, instance);
     ffmpeg = new DNFFmpeg(javaCallHelper, dataSource);
     ffmpeg->setRenderCallback(renderFrame);
     ffmpeg->prepare();
@@ -70,8 +70,9 @@ Java_com_example_ktavplayer_player_DNPlayer_native_1prepare(JNIEnv *env, jobject
 
 JNIEXPORT void JNICALL
 Java_com_example_ktavplayer_player_DNPlayer_native_1start(JNIEnv *env, jobject instance) {
-
-    ffmpeg->start();
+    if (ffmpeg) {
+        ffmpeg->start();
+    }
 }
 
 JNIEXPORT void JNICALL
@@ -93,26 +94,39 @@ JNIEXPORT void JNICALL
 Java_com_example_ktavplayer_player_DNPlayer_native_1stop(JNIEnv *env, jobject instance) {
     if (ffmpeg) {
         ffmpeg->stop();
-        DELETE(ffmpeg);
+        ffmpeg = 0;
+    }
+    if (javaCallHelper) {
+        delete javaCallHelper;
+        javaCallHelper = 0;
     }
 }
 
 JNIEXPORT void JNICALL
 Java_com_example_ktavplayer_player_DNPlayer_native_1release(JNIEnv *env, jobject instance) {
-
+    pthread_mutex_lock(&mutex);
     if (window) {
         ANativeWindow_release(window);
         window = 0;
     }
-
+    pthread_mutex_unlock(&mutex);
 }
 
-JNIEXPORT jlong JNICALL
+JNIEXPORT jint JNICALL
 Java_com_example_ktavplayer_player_DNPlayer_native_1getDuration(JNIEnv *env, jobject instance) {
     if (ffmpeg) {
         return ffmpeg->getDuration();
     }
     return 0;
+}
+
+JNIEXPORT void JNICALL
+Java_com_example_ktavplayer_player_DNPlayer_native_1seek(JNIEnv *env, jobject instance,
+                                                       jint progress) {
+
+    if (ffmpeg){
+        ffmpeg->seek(progress);
+    }
 }
 
 }
