@@ -1,5 +1,6 @@
 package com.example.ktavplayer;
 
+import android.Manifest;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.view.SurfaceView;
@@ -7,16 +8,17 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.SeekBar;
 
-import androidx.activity.ComponentActivity;
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.ktavplayer.player.DNPlayer;
 
-/**
- * @author Lance
- * @date 2018/9/7
- */
-public class PlayActivity extends ComponentActivity implements SeekBar.OnSeekBarChangeListener{
+import java.util.List;
+
+import pub.devrel.easypermissions.EasyPermissions;
+
+public class PlayActivity extends AppCompatActivity implements SeekBar.OnSeekBarChangeListener{
     private DNPlayer dnPlayer;
     public String url;
     private SeekBar seekBar;
@@ -90,6 +92,7 @@ public class PlayActivity extends ComponentActivity implements SeekBar.OnSeekBar
         seekBar.setOnSeekBarChangeListener(this);
         url = getIntent().getStringExtra("url");
         dnPlayer.setDataSource("/sdcard/b.mp4");
+        checkPerm();
     }
 
     @Override
@@ -150,5 +153,34 @@ public class PlayActivity extends ComponentActivity implements SeekBar.OnSeekBar
         progress = dnPlayer.getDuration() * seekBar.getProgress() / 100;
         //进度调整
         dnPlayer.seek(progress);
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        EasyPermissions.onRequestPermissionsResult(requestCode, permissions, grantResults, new EasyPermissions.PermissionCallbacks() {
+            @Override
+            public void onPermissionsGranted(int requestCode, @NonNull List<String> perms) {
+                checkPerm();
+            }
+
+            @Override
+            public void onPermissionsDenied(int requestCode, @NonNull List<String> perms) {
+                finish();
+            }
+
+            @Override
+            public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+
+            }
+        });
+    }
+    public static final int WRITE_EXTERNAL_STORAGE = 100;
+    private void checkPerm() {
+        String[] params = {Manifest.permission.WRITE_EXTERNAL_STORAGE};
+        if (EasyPermissions.hasPermissions(this, params)) {
+        } else {
+            EasyPermissions.requestPermissions(this, "需要读写本地权限", WRITE_EXTERNAL_STORAGE, params);
+        }
     }
 }

@@ -43,13 +43,13 @@ void DNFFmpeg::prepareFFmpeg() {
     // 代表一个 视频/音频 包含了视频、音频的各种信息
     formatContext = avformat_alloc_context();
     //1、打开URL
-    AVDictionary *opts = NULL;
+    AVDictionary *opts = nullptr;
     //设置超时3秒
     av_dict_set(&opts, "timeout", "3000000", 0);
     //强制指定AVFormatContext中AVInputFormat的。这个参数一般情况下可以设置为NULL，这样FFmpeg可以自动检测AVInputFormat。
     //输入文件的封装格式
 //    av_find_input_format("avi")
-    int ret = avformat_open_input(&formatContext, url, NULL, &opts);
+    int ret = avformat_open_input(&formatContext, url, nullptr, &opts);
     //av_err2str(ret)
     LOGE("%s open %d  %s", url, ret, av_err2str(ret));
     if (ret != 0) {

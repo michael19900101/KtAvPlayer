@@ -96,10 +96,10 @@ Java_com_example_ktavplayer_player_DNPlayer_native_1stop(JNIEnv *env, jobject in
         ffmpeg->stop();
         ffmpeg = 0;
     }
-    if (javaCallHelper) {
-        delete javaCallHelper;
-        javaCallHelper = 0;
-    }
+//    if (javaCallHelper) {
+//        delete javaCallHelper;
+//        javaCallHelper = 0;
+//    }
 }
 
 JNIEXPORT void JNICALL
