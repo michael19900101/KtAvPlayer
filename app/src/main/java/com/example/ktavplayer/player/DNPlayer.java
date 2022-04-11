@@ -1,5 +1,6 @@
 package com.example.ktavplayer.player;
 
+import android.util.Log;
 import android.view.Surface;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
@@ -50,6 +51,7 @@ public class DNPlayer implements SurfaceHolder.Callback {
     }
 
     public void onPrepare() {
+        Log.e("DNPlayer","c++ 回调 java onPrepare方法");
         if (null != onPrepareListener) {
             onPrepareListener.onPrepared();
         }

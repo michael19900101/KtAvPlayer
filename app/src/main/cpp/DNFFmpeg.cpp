@@ -19,6 +19,8 @@ void *prepareFFmpeg_(void *args) {
 
 DNFFmpeg::DNFFmpeg(JavaCallHelper *javaCallHelper, const char *dataSource)
         : javaCallHelper(javaCallHelper) {
+    // 防止dataSource参数 指向的内存被释放
+    // strlen获得字符串的长度 不包括\0
     url = new char[strlen(dataSource) + 1];
     strcpy(url, dataSource);
     isPlaying = false;
