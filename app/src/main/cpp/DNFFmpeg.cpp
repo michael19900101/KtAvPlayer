@@ -38,60 +38,69 @@ void DNFFmpeg::prepare() {
 
 
 void DNFFmpeg::prepareFFmpeg() {
-    //todo 最新版本好像不用 regiest_all了
+    // 初始化网络 让ffmpeg能够使用网络
     avformat_network_init();
-    // 代表一个 视频/音频 包含了视频、音频的各种信息
+    // 创建音视频封装格式上下文（代表一个 视频/音频 包含了视频、音频的各种信息）
     formatContext = avformat_alloc_context();
-    //1、打开URL
     AVDictionary *opts = nullptr;
-    //设置超时3秒
+    // 设置超时3秒
     av_dict_set(&opts, "timeout", "3000000", 0);
-    //强制指定AVFormatContext中AVInputFormat的。这个参数一般情况下可以设置为NULL，这样FFmpeg可以自动检测AVInputFormat。
-    //输入文件的封装格式
-//    av_find_input_format("avi")
+    // 1、打开媒体地址(文件地址、直播地址)，解封装
     int ret = avformat_open_input(&formatContext, url, nullptr, &opts);
-    //av_err2str(ret)
-    LOGE("%s open %d  %s", url, ret, av_err2str(ret));
+    LOGE("%s 1. 打开媒体 %d  %s", url, ret, av_err2str(ret));
     if (ret != 0) {
+        LOGE("1. 打开媒体失败:%s",av_err2str(ret));
         if (javaCallHelper) {
             javaCallHelper->onError(THREAD_CHILD, FFMPEG_CAN_NOT_OPEN_URL);
         }
         return;
     }
-    //2.查找流
+    // 2、获取媒体中的 音视频流 (给 formatContext里的 streams等成员赋值)
     if (avformat_find_stream_info(formatContext, NULL) < 0) {
+        LOGE("2. 查找流失败:%s",av_err2str(ret));
         if (javaCallHelper) {
             javaCallHelper->onError(THREAD_CHILD, FFMPEG_CAN_NOT_FIND_STREAMS);
         }
         return;
     }
-    //视频时长（单位：微秒us，转换为秒需要除以1000000）
+    // 视频时长（单位：微秒us，转换为秒需要除以1000000）
     duration = formatContext->duration / 1000000;
+    // 3.获取音视频流索引，nb_streams :几个流(几段视频/音频)
     for (int i = 0; i < formatContext->nb_streams; ++i) {
-        AVCodecParameters *codecpar = formatContext->streams[i]->codecpar;
-        //找到解码器
-        AVCodec *dec = avcodec_find_decoder(codecpar->codec_id);
+        // 可能代表是一个视频 也可能代表是一个音频
+        AVStream *stream = formatContext->streams[i];
+        // 包含了 解码 这段流 的各种参数信息(宽、高、码率、帧率)
+        AVCodecParameters  *pCodecParameters =  stream -> codecpar;
+
+        // 3.1 通过 当前流 使用的 编码方式，查找解码器
+        AVCodec *dec = avcodec_find_decoder(pCodecParameters->codec_id);
         if (!dec) {
+            LOGE("3.1 查找解码器失败:%s",av_err2str(ret));
             if (javaCallHelper) {
                 javaCallHelper->onError(THREAD_CHILD, FFMPEG_FIND_DECODER_FAIL);
             }
             return;
         }
-        //创建上下文
+        // 3.2 获得解码器上下文
         AVCodecContext *codecContext = avcodec_alloc_context3(dec);
         if (!codecContext) {
+            LOGE("3.2 创建解码上下文失败:%s",av_err2str(ret));
             if (javaCallHelper)
                 javaCallHelper->onError(THREAD_CHILD, FFMPEG_ALLOC_CODEC_CONTEXT_FAIL);
             return;
         }
-        //复制参数
-        if (avcodec_parameters_to_context(codecContext, codecpar) < 0) {
+        // 3.3 设置解码器上下文内的一些参数  (复制参数到codecContext)
+        // codecContext->width = pCodecParameters->width;
+        // codecContext->height = pCodecParameters->height;
+        if (avcodec_parameters_to_context(codecContext, pCodecParameters) < 0) {
+            LOGE("3.3 设置解码上下文参数失败:%s",av_err2str(ret));
             if (javaCallHelper)
                 javaCallHelper->onError(THREAD_CHILD, FFMPEG_CODEC_CONTEXT_PARAMETERS_FAIL);
             return;
         }
-        //打开解码器
+        // 3.4 打开解码器
         if (avcodec_open2(codecContext, dec, 0) != 0) {
+            LOGE("3.4 打开解码器失败:%s",av_err2str(ret));
             if (javaCallHelper)
                 javaCallHelper->onError(THREAD_CHILD, FFMPEG_OPEN_DECODER_FAIL);
             return;
@@ -99,10 +108,10 @@ void DNFFmpeg::prepareFFmpeg() {
         //时间基
         AVRational base = formatContext->streams[i]->time_base;
         //音频
-        if (codecpar->codec_type == AVMEDIA_TYPE_AUDIO) {
+        if (pCodecParameters->codec_type == AVMEDIA_TYPE_AUDIO) {
             LOGE("创建audio");
             audioChannel = new AudioChannel(i, javaCallHelper, codecContext, base);
-        } else if (codecpar->codec_type == AVMEDIA_TYPE_VIDEO) {
+        } else if (pCodecParameters->codec_type == AVMEDIA_TYPE_VIDEO) {
             LOGE("创建video");
             //视频
 //            int num = formatContext->streams[i]->avg_frame_rate.num;
@@ -116,12 +125,14 @@ void DNFFmpeg::prepareFFmpeg() {
 
     //音视频都没有
     if (!audioChannel && !videoChannel) {
+        LOGE("没有音视频");
         if (javaCallHelper)
             javaCallHelper->onError(THREAD_CHILD, FFMPEG_NOMEDIA);
         return;
     }
     if (javaCallHelper)
-        javaCallHelper->onParpare(THREAD_CHILD);
+        LOGE("准备完了 通知java 随时可以开始播放");
+    javaCallHelper->onPrepare(THREAD_CHILD);
 }
 
 void *startThread(void *args) {

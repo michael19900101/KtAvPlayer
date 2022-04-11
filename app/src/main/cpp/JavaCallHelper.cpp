@@ -35,7 +35,7 @@ void JavaCallHelper::onError(int thread, int code) {
 
 }
 
-void JavaCallHelper::onParpare(int thread) {
+void JavaCallHelper::onPrepare(int thread) {
     if (thread == THREAD_CHILD) {
         JNIEnv *jniEnv;
         if (javaVM->AttachCurrentThread(&jniEnv, 0) != JNI_OK) {

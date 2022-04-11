@@ -54,6 +54,7 @@ private:
     pthread_t pid_stop;
 
     pthread_mutex_t seekMutex;
+    // 解封装功能的结构体，包含文件名、音视频流、时长、比特率等信息；
     AVFormatContext *formatContext = 0;
 
     int duration;
