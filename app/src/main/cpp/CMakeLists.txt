@@ -24,7 +24,7 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -L${CMAKE_SOURCE_DIR}/../jniLibs/${CMAKE
 # or SHARED, and provides the relative paths to its source code.
 # You can define multiple libraries, and CMake builds them for you.
 # Gradle automatically packages shared libraries with your APK.
-file(GLOB SOURCE src/main/cpp/*.cpp )
+file(GLOB SOURCE ${CMAKE_SOURCE_DIR}/*.cpp )
 add_library( # Sets the name of the library.
         ktavplayer
 
@@ -32,13 +32,7 @@ add_library( # Sets the name of the library.
         SHARED
 
         # Provides a relative path to your source file(s).
-        # ${SOURCE}  为啥不行
-
-        AudioChannel.cpp
-        DNFFmpeg.cpp
-        JavaCallHelper.cpp
-        player_jni.cpp
-        VideoChannel.cpp
+        ${SOURCE}
         )
 
 # Searches for a specified prebuilt library and stores the path as a

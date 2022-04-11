@@ -91,6 +91,7 @@ public class PlayActivity extends AppCompatActivity implements SeekBar.OnSeekBar
         seekBar = findViewById(R.id.seekBar);
         seekBar.setOnSeekBarChangeListener(this);
         url = getIntent().getStringExtra("url");
+//        dnPlayer.setDataSource("http://clips.vorwaerts-gmbh.de/big_buck_bunny.mp4");
         dnPlayer.setDataSource("/sdcard/b.mp4");
         checkPerm();
     }
