@@ -159,10 +159,14 @@ void AudioChannel::initOpenSL() {
     SLDataLocator_AndroidSimpleBufferQueue android_queue = {SL_DATALOCATOR_ANDROIDSIMPLEBUFFERQUEUE,
                                                             2};
     //pcm数据格式
-    SLDataFormat_PCM pcm = {SL_DATAFORMAT_PCM, 2, SL_SAMPLINGRATE_44_1, SL_PCMSAMPLEFORMAT_FIXED_16,
-                            SL_PCMSAMPLEFORMAT_FIXED_16,
-                            SL_SPEAKER_FRONT_LEFT | SL_SPEAKER_FRONT_RIGHT,
-                            SL_BYTEORDER_LITTLEENDIAN};
+    SLDataFormat_PCM pcm = {SL_DATAFORMAT_PCM,
+                            2, // 双声道
+                            SL_SAMPLINGRATE_44_1, // 44100(采样率)
+                            SL_PCMSAMPLEFORMAT_FIXED_16, // 采样位
+                            SL_PCMSAMPLEFORMAT_FIXED_16, // 数据大小
+                            SL_SPEAKER_FRONT_LEFT | SL_SPEAKER_FRONT_RIGHT, // LEFT|RIGHT(双声道)
+                            SL_BYTEORDER_LITTLEENDIAN // 小端数据
+    };
 
     //数据源 将上述配置信息放到这个数据源中
     SLDataSource slDataSource = {&android_queue, &pcm};
