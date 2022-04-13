@@ -34,8 +34,8 @@ public:
     AudioChannel *audioChannel = 0;
 private:
     int fps;
+    pthread_t pid_video_decode;
     pthread_t pid_video_play;
-    pthread_t pid_synchronize;
     RenderFrame renderFrame;
 };
 

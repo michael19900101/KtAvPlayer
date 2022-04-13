@@ -38,7 +38,8 @@ void renderFrame(uint8_t *data, int linesize, int w, int h) {
     uint8_t *src_data = data;
     int src_linesize = linesize;
     //一次拷贝一行
-    for (int i = 0; i < window_buffer.height; ++i) {
+    // todo (window_buffer.height 和 window_buffer.height - 1 临界值的问题)
+    for (int i = 0; i < window_buffer.height - 1; ++i) {
         memcpy(dst_data + i * dst_linesize, src_data + i * src_linesize, dst_linesize);
     }
     ANativeWindow_unlockAndPost(window);

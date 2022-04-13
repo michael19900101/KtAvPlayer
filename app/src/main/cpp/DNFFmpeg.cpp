@@ -1,10 +1,3 @@
-/**
- * @author Lance
- * @date 2018/8/6
- */
-
-
-
 #include "DNFFmpeg.h"
 #include "macro.h"
 

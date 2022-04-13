@@ -1,7 +1,3 @@
-/**
- * @author Lance
- * @date 2018/8/6
- */
 extern "C" {
 
 #include <libavutil/imgutils.h>
@@ -12,13 +8,13 @@ extern "C" {
 #include "macro.h"
 #include "VideoChannel.h"
 
-void *decode(void *args) {
+void *videoDecode(void *args) {
     VideoChannel *videoChannel = static_cast<VideoChannel *>(args);
     videoChannel->decodePacket();
     return 0;
 }
 
-void *synchronize(void *args) {
+void *videoPlay(void *args) {
     VideoChannel *videoChannel = static_cast<VideoChannel *>(args);
     videoChannel->synchronizeFrame();
     return 0;
@@ -61,8 +57,8 @@ VideoChannel::~VideoChannel() {
 void VideoChannel::play() {
     startWork();
     isPlaying = true;
-    pthread_create(&pid_video_play, NULL, decode, this);
-    pthread_create(&pid_synchronize, NULL, synchronize, this);
+    pthread_create(&pid_video_decode, NULL, videoDecode, this);
+    pthread_create(&pid_video_play, NULL, videoPlay, this);
 }
 
 
@@ -213,8 +209,8 @@ void VideoChannel::stop() {
     isPlaying = 0;
     javaCallHelper = 0;
     stopWork();
-    pthread_join(pid_synchronize, 0);
-
     pthread_join(pid_video_play, 0);
+
+    pthread_join(pid_video_decode, 0);
 }
 

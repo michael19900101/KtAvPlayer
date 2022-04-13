@@ -1,10 +1,3 @@
-/**
- * @author Lance
- * @date 2018/8/6
- */
-
-
-
 extern "C" {
 #include <libavutil/time.h>
 }
@@ -66,8 +59,8 @@ void AudioChannel::play() {
     swr_init(swr_ctx);
     startWork();
     isPlaying = true;
-    pthread_create(&pid_audio_play, NULL, audioPlay, this);
     pthread_create(&pid_audio_decode, NULL, audioDecode, this);
+    pthread_create(&pid_audio_play, NULL, audioPlay, this);
 }
 
 
