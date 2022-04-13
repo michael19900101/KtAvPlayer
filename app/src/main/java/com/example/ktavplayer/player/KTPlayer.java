@@ -5,11 +5,7 @@ import android.view.Surface;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
-/**
- * @author Lance
- * @date 2018/8/6
- */
-public class DNPlayer implements SurfaceHolder.Callback {
+public class KTPlayer implements SurfaceHolder.Callback {
     static {
         System.loadLibrary("ktavplayer");
     }

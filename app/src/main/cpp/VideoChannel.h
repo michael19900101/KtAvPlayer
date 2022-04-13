@@ -1,10 +1,5 @@
-/**
- * @author Lance
- * @date 2018/8/6
- */
-
-#ifndef DNPLAYER_VIDEOCHANNEL_H
-#define DNPLAYER_VIDEOCHANNEL_H
+#ifndef KTPLAYER_VIDEOCHANNEL_H
+#define KTPLAYER_VIDEOCHANNEL_H
 
 
 #include "BaseChannel.h"
@@ -40,4 +35,4 @@ private:
 };
 
 
-#endif //DNPLAYER_VIDEOCHANNEL_H
+#endif //KTPLAYER_VIDEOCHANNEL_H

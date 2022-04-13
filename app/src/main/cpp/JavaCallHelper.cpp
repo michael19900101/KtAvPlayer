@@ -1,8 +1,3 @@
-/**
- * @author Lance
- * @date 2018/8/6
- */
-
 #include "JavaCallHelper.h"
 #include "macro.h"
 

@@ -1,16 +1,16 @@
-#include "DNFFmpeg.h"
+#include "KTFFmpeg.h"
 #include "macro.h"
 
 
 void *prepareFFmpeg_(void *args) {
-    DNFFmpeg *dnfFmpeg = static_cast<DNFFmpeg *>(args);
+    KTFFmpeg *dnfFmpeg = static_cast<KTFFmpeg *>(args);
     dnfFmpeg->prepareFFmpeg();
     return 0;
 
 }
 
 
-DNFFmpeg::DNFFmpeg(JavaCallHelper *javaCallHelper, const char *dataSource)
+KTFFmpeg::KTFFmpeg(JavaCallHelper *javaCallHelper, const char *dataSource)
         : javaCallHelper(javaCallHelper) {
     // 防止dataSource参数 指向的内存被释放
     // strlen获得字符串的长度 不包括\0
@@ -21,18 +21,18 @@ DNFFmpeg::DNFFmpeg(JavaCallHelper *javaCallHelper, const char *dataSource)
     pthread_mutex_init(&seekMutex, 0);
 }
 
-DNFFmpeg::~DNFFmpeg() {
+KTFFmpeg::~KTFFmpeg() {
     pthread_mutex_destroy(&seekMutex);
     javaCallHelper = 0;
     DELETE(url);
 }
 
-void DNFFmpeg::prepare() {
+void KTFFmpeg::prepare() {
     pthread_create(&pid_prepare, NULL, prepareFFmpeg_, this);
 }
 
 
-void DNFFmpeg::prepareFFmpeg() {
+void KTFFmpeg::prepareFFmpeg() {
     // 初始化网络 让ffmpeg能够使用网络
     avformat_network_init();
     // 创建音视频封装格式上下文（代表一个 视频/音频 包含了视频、音频的各种信息）
@@ -131,13 +131,13 @@ void DNFFmpeg::prepareFFmpeg() {
 }
 
 void *startThread(void *args) {
-    DNFFmpeg *ffmpeg = static_cast<DNFFmpeg *>(args);
+    KTFFmpeg *ffmpeg = static_cast<KTFFmpeg *>(args);
     ffmpeg->play();
     return 0;
 }
 
 
-void DNFFmpeg::start() {
+void KTFFmpeg::start() {
     isPlaying = true;
     if (audioChannel) {
         audioChannel->play();
@@ -150,7 +150,7 @@ void DNFFmpeg::start() {
 }
 
 
-void DNFFmpeg::play() {
+void KTFFmpeg::play() {
     int ret = 0;
     while (isPlaying) {
         //读取文件的时候没有网络请求，一下子读完了，可能导致oom
@@ -194,12 +194,12 @@ void DNFFmpeg::play() {
     videoChannel->stop();
 }
 
-void DNFFmpeg::setRenderCallback(RenderFrame renderFrame) {
+void KTFFmpeg::setRenderCallback(RenderFrame renderFrame) {
     this->renderFrame = renderFrame;
 }
 
 void *async_stop(void *args) {
-    DNFFmpeg *ffmpeg = static_cast<DNFFmpeg *>(args);
+    KTFFmpeg *ffmpeg = static_cast<KTFFmpeg *>(args);
     pthread_join(ffmpeg->pid_prepare, 0);
     ffmpeg->isPlaying = 0;
     pthread_join(ffmpeg->pid_play, 0);
@@ -215,7 +215,7 @@ void *async_stop(void *args) {
     return 0;
 }
 
-void DNFFmpeg::stop() {
+void KTFFmpeg::stop() {
     javaCallHelper = 0;
     if (audioChannel) {
         audioChannel->javaCallHelper = 0;
@@ -227,7 +227,7 @@ void DNFFmpeg::stop() {
 }
 
 
-void DNFFmpeg::seek(int i) {
+void KTFFmpeg::seek(int i) {
     //进去必须 在0- duration 范围之类
     if (i< 0 || i >= duration) {
         return;

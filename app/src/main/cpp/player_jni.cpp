@@ -1,11 +1,11 @@
 #include <jni.h>
 #include <android/native_window_jni.h>
-#include "DNFFmpeg.h"
+#include "KTFFmpeg.h"
 #include "macro.h"
 
 
 JavaVM *javaVM = NULL;
-DNFFmpeg *ffmpeg = 0;
+KTFFmpeg *ffmpeg = 0;
 JavaCallHelper *javaCallHelper = 0;
 ANativeWindow *window = 0;
 pthread_mutex_t mutex = PTHREAD_MUTEX_INITIALIZER;
@@ -58,11 +58,11 @@ JNIEXPORT jint JNICALL JNI_OnLoad(JavaVM *vm, void *reserved) {
 }
 
 JNIEXPORT void JNICALL
-Java_com_example_ktavplayer_player_DNPlayer_native_1prepare(JNIEnv *env, jobject instance,
-                                                          jstring dataSource_) {
+Java_com_example_ktavplayer_player_KTPlayer_native_1prepare(JNIEnv *env, jobject instance,
+                                                            jstring dataSource_) {
     const char *dataSource = env->GetStringUTFChars(dataSource_, 0);
     javaCallHelper = new JavaCallHelper(javaVM, env, instance);
-    ffmpeg = new DNFFmpeg(javaCallHelper, dataSource);
+    ffmpeg = new KTFFmpeg(javaCallHelper, dataSource);
     ffmpeg->setRenderCallback(renderFrame);
     ffmpeg->prepare();
     env->ReleaseStringUTFChars(dataSource_, dataSource);
@@ -70,15 +70,15 @@ Java_com_example_ktavplayer_player_DNPlayer_native_1prepare(JNIEnv *env, jobject
 
 
 JNIEXPORT void JNICALL
-Java_com_example_ktavplayer_player_DNPlayer_native_1start(JNIEnv *env, jobject instance) {
+Java_com_example_ktavplayer_player_KTPlayer_native_1start(JNIEnv *env, jobject instance) {
     if (ffmpeg) {
         ffmpeg->start();
     }
 }
 
 JNIEXPORT void JNICALL
-Java_com_example_ktavplayer_player_DNPlayer_native_1set_1surface(JNIEnv *env, jobject instance,
-                                                               jobject surface) {
+Java_com_example_ktavplayer_player_KTPlayer_native_1set_1surface(JNIEnv *env, jobject instance,
+                                                                 jobject surface) {
     pthread_mutex_lock(&mutex);
     //先释放之前的显示窗口
     if (window) {
@@ -92,7 +92,7 @@ Java_com_example_ktavplayer_player_DNPlayer_native_1set_1surface(JNIEnv *env, jo
 
 
 JNIEXPORT void JNICALL
-Java_com_example_ktavplayer_player_DNPlayer_native_1stop(JNIEnv *env, jobject instance) {
+Java_com_example_ktavplayer_player_KTPlayer_native_1stop(JNIEnv *env, jobject instance) {
     if (ffmpeg) {
         ffmpeg->stop();
         ffmpeg = 0;
@@ -104,7 +104,7 @@ Java_com_example_ktavplayer_player_DNPlayer_native_1stop(JNIEnv *env, jobject in
 }
 
 JNIEXPORT void JNICALL
-Java_com_example_ktavplayer_player_DNPlayer_native_1release(JNIEnv *env, jobject instance) {
+Java_com_example_ktavplayer_player_KTPlayer_native_1release(JNIEnv *env, jobject instance) {
     pthread_mutex_lock(&mutex);
     if (window) {
         ANativeWindow_release(window);
@@ -114,7 +114,7 @@ Java_com_example_ktavplayer_player_DNPlayer_native_1release(JNIEnv *env, jobject
 }
 
 JNIEXPORT jint JNICALL
-Java_com_example_ktavplayer_player_DNPlayer_native_1getDuration(JNIEnv *env, jobject instance) {
+Java_com_example_ktavplayer_player_KTPlayer_native_1getDuration(JNIEnv *env, jobject instance) {
     if (ffmpeg) {
         return ffmpeg->getDuration();
     }
@@ -122,8 +122,8 @@ Java_com_example_ktavplayer_player_DNPlayer_native_1getDuration(JNIEnv *env, job
 }
 
 JNIEXPORT void JNICALL
-Java_com_example_ktavplayer_player_DNPlayer_native_1seek(JNIEnv *env, jobject instance,
-                                                       jint progress) {
+Java_com_example_ktavplayer_player_KTPlayer_native_1seek(JNIEnv *env, jobject instance,
+                                                         jint progress) {
 
     if (ffmpeg){
         ffmpeg->seek(progress);

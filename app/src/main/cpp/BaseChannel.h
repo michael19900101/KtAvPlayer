@@ -1,10 +1,5 @@
-/**
- * @author Lance
- * @date 2018/8/6
- */
-
-#ifndef DNPLAYER_BASECHANNEL_H
-#define DNPLAYER_BASECHANNEL_H
+#ifndef KTPLAYER_BASECHANNEL_H
+#define KTPLAYER_BASECHANNEL_H
 
 #include "safe_queue.h"
 #include "macro.h"

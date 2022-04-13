@@ -1,10 +1,5 @@
-/**
- * @author Lance
- * @date 2018/8/6
- */
-
-#ifndef DNPLAYER_JAVACALLHELPER_H
-#define DNPLAYER_JAVACALLHELPER_H
+#ifndef KTPLAYER_JAVACALLHELPER_H
+#define KTPLAYER_JAVACALLHELPER_H
 
 
 #include <jni.h>
@@ -36,4 +31,4 @@ public:
 };
 
 
-#endif //DNPLAYER_JAVACALLHELPER_H
+#endif //KTPLAYER_JAVACALLHELPER_H

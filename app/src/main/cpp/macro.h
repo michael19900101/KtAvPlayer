@@ -1,10 +1,5 @@
-/**
- * @author Lance
- * @date 2018/8/9
- */
-
-#ifndef DNPLAYER_MACRO_H
-#define DNPLAYER_MACRO_H
+#ifndef KTPLAYER_MACRO_H
+#define KTPLAYER_MACRO_H
 
 #include <android/log.h>
 
@@ -35,4 +30,4 @@
 
 
 
-#endif //DNPLAYER_MACRO_H
+#endif //KTPLAYER_MACRO_H

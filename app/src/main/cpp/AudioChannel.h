@@ -1,8 +1,3 @@
-/**
- * @author Lance
- * @date 2018/8/6
- */
-
 #ifndef DNPLAYER_AUDIOCHANNEL_H
 #define DNPLAYER_AUDIOCHANNEL_H
 

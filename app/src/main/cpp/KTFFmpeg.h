@@ -1,10 +1,5 @@
-/**
- * @author Lance
- * @date 2018/8/6
- */
-
-#ifndef DNPLAYER_DNFFMPEG_H
-#define DNPLAYER_DNFFMPEG_H
+#ifndef KTPLAYER_DNFFMPEG_H
+#define KTPLAYER_DNFFMPEG_H
 
 
 #include <pthread.h>
@@ -20,12 +15,12 @@ extern "C" {
 }
 
 
-class DNFFmpeg {
+class KTFFmpeg {
     friend void* async_stop(void* args);
 public:
-    DNFFmpeg(JavaCallHelper *javaCallHelper, const char *dataSource);
+    KTFFmpeg(JavaCallHelper *javaCallHelper, const char *dataSource);
 
-    ~DNFFmpeg();
+    ~KTFFmpeg();
 
     void prepare();
 
@@ -70,4 +65,4 @@ private:
 };
 
 
-#endif //DNPLAYER_DNFFMPEG_H
+#endif //KTPLAYER_DNFFMPEG_H
