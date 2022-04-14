@@ -3,6 +3,7 @@ package com.example.ktavplayer;
 import android.Manifest;
 import android.content.res.Configuration;
 import android.os.Bundle;
+import android.os.Environment;
 import android.view.SurfaceView;
 import android.view.View;
 import android.view.WindowManager;
@@ -14,23 +15,25 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.ktavplayer.player.KTPlayer;
 
+import java.io.File;
 import java.util.List;
 
 import pub.devrel.easypermissions.EasyPermissions;
 
 public class PlayActivity extends AppCompatActivity implements SeekBar.OnSeekBarChangeListener{
     private KTPlayer ktPlayer;
-    public String url;
     private SeekBar seekBar;
 
     private int progress;
     private boolean isTouch;
     private boolean isSeek;
-
+    private String mVideoPath;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        File videoFile = new File(getExternalFilesDir(null),"ktavplayer/one_piece.mp4");
+        mVideoPath = videoFile.getAbsolutePath();
 
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON, WindowManager
                 .LayoutParams.FLAG_KEEP_SCREEN_ON);
@@ -90,9 +93,8 @@ public class PlayActivity extends AppCompatActivity implements SeekBar.OnSeekBar
         });
         seekBar = findViewById(R.id.seekBar);
         seekBar.setOnSeekBarChangeListener(this);
-        url = getIntent().getStringExtra("url");
 //        ktPlayer.setDataSource("http://clips.vorwaerts-gmbh.de/big_buck_bunny.mp4");
-        ktPlayer.setDataSource("/sdcard/b.mp4");
+        ktPlayer.setDataSource(mVideoPath);
         checkPerm();
     }
 
@@ -108,7 +110,7 @@ public class PlayActivity extends AppCompatActivity implements SeekBar.OnSeekBar
         setContentView(R.layout.activity_play);
         SurfaceView surfaceView = findViewById(R.id.surfaceView);
         ktPlayer.setSurfaceView(surfaceView);
-        ktPlayer.setDataSource(url);
+        ktPlayer.setDataSource(mVideoPath);
         seekBar = findViewById(R.id.seekBar);
         seekBar.setOnSeekBarChangeListener(this);
         seekBar.setProgress(progress);

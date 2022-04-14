@@ -91,6 +91,9 @@ public class KTPlayer implements SurfaceHolder.Callback {
         native_release();
     }
 
+    public static String GetFFmpegVersion() {
+        return native_GetFFmpegVersion();
+    }
 
     private native void native_start();
 
@@ -105,6 +108,8 @@ public class KTPlayer implements SurfaceHolder.Callback {
     private native int native_getDuration();
 
     private native void native_seek(int progress);
+
+    private static native String native_GetFFmpegVersion();
 
     public void setOnPrepareListener(OnPrepareListener onPrepareListener) {
         this.onPrepareListener = onPrepareListener;
