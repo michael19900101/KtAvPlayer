@@ -61,7 +61,9 @@ void KTFFmpeg::prepareFFmpeg() {
     // 视频时长（单位：微秒us，转换为秒需要除以1000000）
     duration = formatContext->duration / 1000000;
     // 3.获取音视频流索引，nb_streams :几个流(几段视频/音频)
-    for (int i = 0; i < formatContext->nb_streams; ++i) {
+//    int length = formatContext->nb_streams; // 在android 10以上会报错
+    int length = 2;
+    for (int i = 0; i < length; ++i) {
         // 可能代表是一个视频 也可能代表是一个音频
         AVStream *stream = formatContext->streams[i];
         // 包含了 解码 这段流 的各种参数信息(宽、高、码率、帧率)

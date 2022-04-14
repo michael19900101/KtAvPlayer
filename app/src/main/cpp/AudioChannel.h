@@ -1,5 +1,5 @@
-#ifndef DNPLAYER_AUDIOCHANNEL_H
-#define DNPLAYER_AUDIOCHANNEL_H
+#ifndef KTPLAYER_AUDIOCHANNEL_H
+#define KTPLAYER_AUDIOCHANNEL_H
 
 #include "BaseChannel.h"
 #include <pthread.h>
@@ -59,4 +59,4 @@ public:
 };
 
 
-#endif //DNPLAYER_AUDIOCHANNEL_H
+#endif //KTPLAYER_AUDIOCHANNEL_H
