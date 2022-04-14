@@ -32,7 +32,7 @@ public class PlayActivity extends AppCompatActivity implements SeekBar.OnSeekBar
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        File videoFile = new File(getExternalFilesDir(null),"ktavplayer/one_piece.mp4");
+        File videoFile = new File(getExternalFilesDir(null),"ktavplayer/slam_dunk.mp4");
         mVideoPath = videoFile.getAbsolutePath();
 
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON, WindowManager
