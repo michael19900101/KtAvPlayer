@@ -3,8 +3,8 @@
 
 
 void *prepareFFmpeg_(void *args) {
-    KTFFmpeg *dnfFmpeg = static_cast<KTFFmpeg *>(args);
-    dnfFmpeg->prepareFFmpeg();
+    KTFFmpeg *ktFFmpeg = static_cast<KTFFmpeg *>(args);
+    ktFFmpeg->prepareFFmpeg();
     return 0;
 
 }

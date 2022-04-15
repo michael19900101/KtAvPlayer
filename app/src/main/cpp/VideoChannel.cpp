@@ -107,7 +107,7 @@ void VideoChannel::synchronizeFrame() {
             avCodecContext->width, avCodecContext->height, AV_PIX_FMT_RGBA,
             SWS_BILINEAR, 0, 0, 0);
 
-    //1s
+    //每一帧刷新的间隔时间 单位秒
     double frame_delay = 1.0 / fps;
     uint8_t *dst_data[4];
     int dst_linesize[4];
